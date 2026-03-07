@@ -1,68 +1,100 @@
-# Cursor 自動コード生成仕様書
+# Cursor自動コード生成仕様書
 
 ## 機能概要
-本機能は、特定の画面で「更新」ボタンを押下することで、その画面の内容をリロードする機能を提供します。ユーザーが最新のデータを確認できるように、ボタンの押下に対して画面が再描画され、最新の情報が表示されるようにします。
+本機能は、ユーザーが「更新」ボタンを押すことで、画面をリロードし、最新の情報を表示することを目的としています。この機能は、データの動的な更新とユーザー体験の向上を図るものです。
 
 ## 技術仕様
-- **フロントエンドフレームワーク**: React.js (またはVue.js)
-- **状態管理**: Redux (または Vuex)
-- **API通信**: Axios (または Fetch API)
-- **ボタンイベント**: `onClick` イベントでリロード関数を呼び出す
-- **リロード処理**:
-  - APIから最新データを取得
-  - ステートを更新し、画面を再描画
-- **エラーハンドリング**: API通信が失敗した場合はエラーメッセージを表示
+- **プラットフォーム**: Webアプリケーション
+- **使用技術**:
+  - HTML5
+  - CSS3
+  - JavaScript (ES6)
+  - フレームワーク（必要に応じて例: React, Vue.js, Angularなど）
+- **機能要件**:
+  - 更新ボタンをクリックすると、ページ内のデータを最新の情報でリロードする
+  - 更新ボタンは、ユーザーインターフェースの適切な位置に配置する
+  - 更新処理は非同期で行い、ユーザーにリロード中のインジケーターを表示する
 
 ## ファイル構成
 ```
-/src
-├── components
-│   ├── ReloadButton.js       // 更新ボタンコンポーネント
-│   ├── DataDisplay.js        // データ表示コンポーネント
+/project-root
 │
-├── hooks
-│   └── useFetchData.js       // データ取得のためのカスタムフック
-│
-├── redux
-│   ├── actions
-│   │   └── dataActions.js    // データ関連のアクション
-│   ├── reducers
-│   │   └── dataReducer.js     // データ管理のリデューサー
-│   └── store.js              // Reduxストアの設定
-│
-├── App.js                    // メインアプリケーションファイル
-└── index.js                  // エントリーポイント
+├── index.html         # メインHTMLファイル
+├── styles.css         # スタイルシート
+├── scripts.js         # メインJavaScriptファイル
+├── components/        # コンポーネントディレクトリ
+│   ├── UpdateButton.js  # 更新ボタンのコンポーネント
+│   └── DataDisplay.js    # データ表示用コンポーネント
+└── assets/            # 画像及びその他のアセット
 ```
 
 ## 実装ステップ
-1. **プロジェクトセットアップ**
-   - Create React AppやVue CLIを使用して新しいプロジェクトを作成し、必要な依存関係（Redux, Axiosなど）をインストール。
+1. **HTML構造の作成**:
+   - `index.html` ファイルに「更新」ボタンを追加し、必要なデータ表示用のマークアップを作成する。
 
-2. **データ取得用のカスタムフックの作成**
-   - `useFetchData.js`を作成し、APIからデータを取得するロジックを実装。
-   - 状態を管理するために`useState`と`useEffect`を使用する。
+   ```html
+   <!DOCTYPE html>
+   <html lang="ja">
+   <head>
+       <meta charset="UTF-8">
+       <title>更新機能テスト</title>
+       <link rel="stylesheet" href="styles.css">
+   </head>
+   <body>
+       <div id="data-container">
+           <!-- データ表示エリア -->
+       </div>
+       <button id="update-button">更新</button>
+       <script src="scripts.js"></script>
+   </body>
+   </html>
+   ```
 
-3. **Reduxストアの作成**
-   - `dataActions.js`でアクションを定義し、`dataReducer.js`で状態管理のロジックを実装。
-   - `store.js`でReduxストアを設定し、アプリに提供する。
+2. **スタイルの作成**:
+   - `styles.css` にボタンやデータ表示エリアのスタイルを追加する。
 
-4. **更新ボタンコンポーネントの実装**
-   - `ReloadButton.js`を作成し、ボタンの押下時にデータ取得の関数を呼び出すイベントリスナーを実装。
+   ```css
+   #update-button {
+       padding: 10px 20px;
+       background-color: #007bff;
+       color: white;
+       border: none;
+       border-radius: 5px;
+       cursor: pointer;
+   }
 
-5. **データ表示コンポーネントの実装**
-   - `DataDisplay.js`を作成し、Reduxストアから最新データを取得して表示。
+   #data-container {
+       margin-top: 20px;
+   }
+   ```
 
-6. **メインアプリケーションファイルの調整**
-   - `App.js`で`ReloadButton`と`DataDisplay`をインポートし、主画面に配置。
-   - Reduxストアをプロバイダーとして`index.js`に統合。
+3. **JavaScript実装**:
+   - `scripts.js` に「更新」ボタンのクリックイベントリスナーを実装し、非同期通信でデータを取りに行くロジックを作成する。
 
-7. **エラーハンドリングの追加**
-   - データ取得時にエラーが発生した場合、ユーザーにエラーメッセージを表示するロジックを追加。
+   ```javascript
+   document.getElementById('update-button').addEventListener('click', async function() {
+       // リロードインジケーター表示
+       const dataContainer = document.getElementById('data-container');
+       dataContainer.innerHTML = '読み込み中...';
 
-8. **テストの実装**
-   - ユニットテストを作成し、コンポーネントやリデューサーの機能を確認。
+       try {
+           const response = await fetch('/path/to/api/endpoint'); // APIエンドポイントへの非同期通信
+           const data = await response.json(); // 取得したデータをJSON形式で変換
 
-9. **デプロイ準備**
-   - ビルド設定と環境変数の設定を行い、プロジェクトを本番環境にデプロイ。
+           // データの表示処理
+           dataContainer.innerHTML = JSON.stringify(data); // データを表示
+       } catch (error) {
+           dataContainer.innerHTML = 'データの取得に失敗しました。';
+           console.error('Error fetching data:', error);
+       }
+   });
+   ```
 
-この仕様書に基づいて、画面更新機能を実装することができます。必要に応じて、追加機能や改善点を検討してください。
+4. **動作確認**:
+   - 実装した機能が期待通りに動作するか確認する。
+   - 「更新」ボタンを押下し、データが正しくリロードされることをテストする。
+
+5. **ドキュメント作成**:
+   - 追加した機能についての利用方法やコードの説明を含むドキュメントを作成し、READMEに追加する。
+
+以上で、Cursorが自動コード生成できる仕様書が完成しました。
