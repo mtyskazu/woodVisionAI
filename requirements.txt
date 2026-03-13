@@ -1,0 +1,18 @@
+# Core
+numpy>=1.24
+opencv-python>=4.8
+Pillow>=10.0
+PySide6>=6.6
+
+# IDS Peak SDK — installed separately via IDS Peak installer
+# https://www.ids-imaging.com/downloads
+# ids_peak and ids_peak_ipl are provided by the installer
+
+# PyTorch (CUDA 12.x) — install via:
+# pip install torch torchvision --index-url https://download.pytorch.org/whl/cu121
+# torch>=2.1
+# torchvision>=0.16
+
+# Dev
+pytest>=7.4
+ruff>=0.4
